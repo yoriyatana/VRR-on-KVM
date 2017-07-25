@@ -23,3 +23,6 @@ lvmthin: local-lvm
         content rootdir,images
 ```
 There is already an images folder within `/var/lib/vz` (the default local storage directory), so why is storing images there disabled by default?
+
+## Source
+https://forum.proxmox.com/threads/how-to-migrate-a-virtual-machine-image-into-local-lvm.28751/
