@@ -24,38 +24,40 @@ Download the installation .iso file from Proxmox downloads and create a bootable
 Set the BIOS of your PC to boot from the USB key and proceed to boot.
 
 When prompted, select Install Proxmox VE
-Accept the EULA agreement by clicking Next.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-1.png "")
 
-Accept EULA
+Accept the EULA agreement by clicking Next.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-2.png "")
 
 Select the hard disk you wish to install to and click Next. Here I am installing to my Intel 750 NVMe PCI drive. Booting from NVMe devices is a recent addition to Proxmox and I.ll go over whats required to enable this later on in this guide. Feel free to leave the options as default.
-
-Set install drive
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-3.png "")
 
 Set Country, timezone and keyboard layout then click Next
-
-Set locale
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-4.png "")
 
 Enter a strong password and an email address. Its worth using a valid email address as this can be used to reset your password in future should you need to for any reason.
-
-Set admin details
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-5.png "")
 
 Setup the network as per your local requirements, here I am connecting to my VL20_VPNLAN with a fixed address in the range I use for critical production servers.
-
+```
 Hostname = proxmox.local.lan
 IP Address = 192.168.20.12
 Netmask = 255.255.255.0
 Gateway = 192.168.20.1
 DNS = 192.168.20.1
-Click next to proceed.
+```
 
-Configure network
+Click next to proceed.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-6.png "")
 
 Reboot and remove CD/USB when prompted and click Next to restart.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-7.png "")
 
 If everything has worked correctly you will see a screen that looks something like this with lines of text scolling up the screen.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-8.png "")
 
 Once the boot sequence has completed, you.ll be presented with a login screen. Proxmox has now completed booting and we can commence with our configuration.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-9.png "")
 
 We aren.t going to jump into the web GUI immediately, first we will log into the command shell and setup the underlying Linux systems for a some key services we will need for reliable operation of Proxmox.
 
@@ -283,11 +285,11 @@ Amnesiac (ttyd0)
 login:
 ```
 
-Log in from the console with the username root and no password. Type cli to access the Junos OS CLI.
+Log in from the console with the **username: root** and **no password**. Type cli to access the Junos OS CLI.
 
 Verify that your VM is installed using the show interfaces terse command. The added interfaces appear as em interfaces.
 
-To disconnect from the console, press Ctrl + o.
+To disconnect from the console, press *Ctrl + o*.
 ```
 press Ctrl + o
 ```
