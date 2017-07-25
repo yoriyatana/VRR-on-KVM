@@ -61,11 +61,13 @@ Once the boot sequence has completed, you.ll be presented with a login screen. P
 
 We aren.t going to jump into the web GUI immediately, first we will log into the command shell and setup the underlying Linux systems for a some key services we will need for reliable operation of Proxmox.
 
+Login to console with username **root** and the password you used during the initial install.
+
 ### Part2: Update Linux packages for non-licenced use.
 
 The pve-no-subscription repo can be used for testing and non-production use. Its not recommended to run on production servers as these packages are not as comprehensively tested and validated prior to release. For my intended use, the free version will suffice.
 
-Enter nano /etc/apt/sources.list to edit the repositories
+Enter `nano /etc/apt/sources.list` to edit the repositories
 ```
 deb http://ftp.debian.org/debian jessie main contrib
 
@@ -76,14 +78,14 @@ deb http://download.proxmox.com/debian jessie pve-no-subscription
 deb http://security.debian.org/ jessie/updates main contrib
 ```
 
-CTRL-X, Y to Save and exit.
+`CTRL-X`, `Y` to Save and exit.
 
-Enter nano /etc/apt/sources.list.d/pve-enterprise.list and comment the following line out by placing a hash (#) character at the beginning the line to disable and prevent errors in the logs the subscription only repo.s.
+Enter `nano /etc/apt/sources.list.d/pve-enterprise.list` and comment the following line out by placing a hash (**#**) character at the beginning the line to disable and prevent errors in the logs the subscription only repo.s.
 ```
 # deb https://enterprise.proxmox.com/debian jessie pve-enterprise
 ```
 
-CTRL-X, Y to Save and exit.
+`CTRL-X`, `Y` to Save and exit.
 
 It.s worth updating and upgrading your packages at this time with the following commands
 ```
@@ -93,11 +95,11 @@ apt-get upgrade
 
 ### Set NTP time servers
 
-Its important to have correctly syncronised clocks across your networks to prevent any issues. Lets ensure our Proxmox server is contacting the correct server for NTP info. My pfSense router provides internal NTP synchronisation.
+Its important to have correctly syncronised clocks across your networks to prevent any issues. Lets ensure our Proxmox server is contacting the correct server for NTP info. You can use any NTP server for your area/region for NTP synchronisation.
 
-Enter nano /etc/systemd/timesyncd.conf and add the following line but specify your own NTP server here.
+Enter `nano /etc/systemd/timesyncd.conf` and add the following line but specify your own NTP server here.
 ```
-Servers=192.168.20.1
+Servers=vn.pool.ntp.org
 ```
 
 you can verify NTP is working by entering the command
@@ -122,28 +124,14 @@ NTP synchronized: yes
 
 Finally. lets log into the web interface to complete our configuration. 
 Open a browser and head to the GUI address as entered during your install and also as displayed on the console page.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-9.png "")
 
-Console
-
-.and enter your username and admin password
-
-Log in
+and enter your username and admin password
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-10.png "")
 
 and assuming you don.t have a subscription, acknowledge the lack of subscription option.
 
-Safari
-
-I used Safari at first but had several issues including a opening consoles to VM.s. I found it was necessary to Always Allow the default Proxmox certificate to enable Safari to enable working with Proxmox viable.
-
-Safari error
-
-Set access to Always Trust
-
-Safari fix
-
-Firefox and Chrome seem to integrate with Proxmox much better so if you have either of them available on your system you might want to consider using them instead.
-
-Configure additional network interface
+#### Configure additional network interface
 
 I now recommend editing the network configuration via the Proxmox web interface rather than directly in the /etc/network/interfaces file.
 
@@ -151,11 +139,10 @@ During installation, Proxmox configures the first interface found during install
 
 Navidate to ServerView > DataCenter > Proxmox and select Network.
 
-Create vmbr10 / VLAN 10 - VL10_MGMT
+#### Create vmbr10 / VLAN 10 - VL10_MGMT
 
 Click Create and select Linux Bridge
-
-Create VLAN 10 network
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-11.png "")
 
 Name = vmbr10
 IP address = empty
@@ -167,11 +154,11 @@ Gateway = empty
 Autostart = [x]
 Vlan aware = [x]
 Bridge ports = eth1.10
-Create vmbr20 / VLAN 20 - VL20_VPN
+
+#### Create vmbr20 / VLAN 20 - VL20_VPN
 
 Click Create and select Linux Bridge
-
-Create VLAN 20 network
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-12.png "")
 
 Name = vmbr20
 IP address = empty
@@ -183,9 +170,9 @@ Gateway = empty
 Autostart = [x]
 Vlan aware = [x]
 Bridge ports = eth1.20
-and here.s what the finished Network view should look like when you are finished.
 
-Final network
+and here.s what the finished Network view should look like when you are finished.
+![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-13.png "")
 
 And for completeness, here.s how this configuration translates into the /etc/network/interfaces configuration file.
 ```
@@ -193,7 +180,7 @@ $ cat /etc/network/interfaces
 # network interface settings; autogenerated
 # Please do NOT modify this file directly, unless you know what
 # you're doing.
-#
+
 # If you want to manage part of the network configuration manually,
 # please utilize the 'source' or 'source-directory' directives to do
 # so.
@@ -239,16 +226,16 @@ For a full description of this file and it contents, refer to the Debian network
 
 Save the file and reboot.
 
-#### Part4: Create vRR VM using command line interface
+### Part4: Create vRR VM using command line interface
 Copy the vRR image to the PVE server via SCP or SFTP
 
-Rename it to the name you want to call the disk. I.E. VMid 106 and disk called vm-106-disk-1.qcow2:
+Rename it to the name you want to call the disk. *I.E. VMid 106 and disk called vm-106-disk-1.qcow2*
 ```
 export VM=$(pvesh get /cluster/nextid | grep -oE '[0-9]*')
 cp jinstall64-vrr-14.2R7.5-domestic.img vm-$VM-disk-1.qcow2
 ```
 
-Create the new VM with the qm command. You must specify the VM name, memory, and image location. The amount of memory depends on your deployment.
+Create the new VM with the `qm` command. You must specify the VM name, memory, and image location. The amount of memory depends on your deployment.
 ```
 qm create $VM --net0 e1000,bridge=vmbr0 --net1 e1000,bridge=vmbr1 --cores 4 --cpu host --name vRR --memory 8192 --bootdisk ide0 --serial0 socket
 ```
@@ -285,11 +272,11 @@ Amnesiac (ttyd0)
 login:
 ```
 
-Log in from the console with the **username: root** and **no password**. Type cli to access the Junos OS CLI.
+Log in from the console with the **username:** `root` and `no password`. Type cli to access the Junos OS CLI.
 
 Verify that your VM is installed using the show interfaces terse command. The added interfaces appear as em interfaces.
 
-To disconnect from the console, press *Ctrl + o*.
+To disconnect from the console, press `Ctrl + o`.
 ```
 press Ctrl + o
 ```
