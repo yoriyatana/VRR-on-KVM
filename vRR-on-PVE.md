@@ -144,7 +144,7 @@ Navidate to ServerView > DataCenter > Proxmox and select Network.
 Click Create and select Linux Bridge
 
 ![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-11.png "")
-
+```
 Name = vmbr10
 IP address = empty
 Subnet mask = empty
@@ -155,13 +155,14 @@ Gateway = empty
 Autostart = [x]
 Vlan aware = [x]
 Bridge ports = eth1.10
+```
 
 #### Create vmbr20 / VLAN 20 - VL20_VPN
 
 Click Create and select Linux Bridge
 
 ![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-12.png "")
-
+```
 Name = vmbr20
 IP address = empty
 Subnet mask = empty
@@ -172,6 +173,7 @@ Gateway = empty
 Autostart = [x]
 Vlan aware = [x]
 Bridge ports = eth1.20
+```
 
 and here.s what the finished Network view should look like when you are finished.
 ![alt text](https://github.com/yoriyatana/VRR-on-KVM/blob/master/IMG/install-proxmox-13.png "")
